@@ -1,4 +1,6 @@
 import PySimpleGUI as sg
+from pathlib import Path
+import os
 sg.theme("Reds")
 
 left_side = [
@@ -39,11 +41,35 @@ middle_menu = [
             sg.Exit(button_color="tomato", size = (10,5))
         ]  
 ]
-
 layout = [[sg.Column(left_side), sg.Column(middle_menu), sg.Column(right_side)]]
 window = sg.Window("File Organizer", layout, finalize = True, use_custom_titlebar = True)
+
+def refresh_list(window, folder_name, list_key):
+    folder = values[folder_name]
+    try:
+        file_list = os.listdir(folder)
+    except:
+        file_list = []
+    file_name = [f for f in file_list if os.path.isfile(os.path.join(folder, f))]
+    window[list_key].update(file_name)
 
 while True:
     event, values = window.read()
     if event in (sg.WINDOW_CLOSED, "Exit"):
         break
+    elif event == "-Left Folder-":
+        refresh_list(window, "-Left Folder-", "-Left List-")
+    elif event == "-Right Folder-":
+        refresh_list(window, "-Right Folder-", "-Right List-")
+    elif event == "-Swap-":
+        sg.popup_ok("Swap")
+        refresh_list(window, "-Left Folder-", "-Left List-")
+    elif event == "-Move-":
+        sg.popup_ok("Move")
+        refresh_list(window, "-Left Folder-", "-Left List-")
+    elif event == "-Copy-":
+        sg.popup_ok("Copy")
+        refresh_list(window, "-Left Folder-", "-Left List-")
+    elif event == "-Create-":
+        sg.popup_ok("Create")
+        refresh_list(window, "-Left Folder-", "-Left List-")
