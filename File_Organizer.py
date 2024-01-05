@@ -111,7 +111,17 @@ while True:
         refresh_list(window, "-Right Folder-", "-Right List-")
 
     elif event == "-Copy-":
-        sg.popup_ok("Copy")
+        try:
+            file, destination = swap_direction()
+            check_list = values["-Left List-" if target_direction == "Right" else "-Right List-"]
+            check = os.path.join(destination, check_list[0]) if check_list else None
+            if not os.path.exists(check):
+                shutil.copy(file, destination)
+                sg.popup_ok("The file was successfully copied!")
+            else:
+                sg.popup_error("The file already exist in this folder!")
+        except (IndexError) as idx_exc:
+            sg.popup_error("Please select a file you wish to copy!")
         refresh_list(window, "-Left Folder-", "-Left List-")
         refresh_list(window, "-Right Folder-", "-Right List-")
 
