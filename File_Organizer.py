@@ -3,8 +3,13 @@ from pathlib import Path
 import os
 import shutil
 import logging
-
+from datetime import date
 sg.theme("Reds")
+
+if not os.path.exists("./loggs/"):
+    os.makedirs("./loggs/")
+logging.basicConfig(filename = "./loggs/log-" + str(date.today()) + ".txt", level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.info("Started Program")
 
 left_side = [
     [
@@ -85,6 +90,7 @@ def create_dir(base_path):
                     if folder_name:
                         folder_path = os.path.join(location, folder_name)
                         os.makedirs(folder_path)
+                        logging.info(f"Created {folder_name}.")
                         sg.popup_ok(f"Folder {folder_name} has been successfully created!") 
             except ValueError:
                 sg.popup_error("Invalid input for the number of folders, try again!")                             
@@ -92,14 +98,12 @@ def create_dir(base_path):
     elif answer == "No":
         location = sg.popup_get_folder("Choose the location you want to create the folder:")
         if location:
-            try:
                 folder_name = sg.popup_get_text("Enter the name for the folder:", default_text = "Folder")
                 if folder_name:
                     folder_path = os.path.join(location, folder_name)
                     os.makedirs(folder_path)
+                    logging.info(f"Created {folder_name}.")
                     sg.popup_ok(f"Folder {folder_name} has successfully been created!")
-            except ValueError:
-                sg.popup_error("Something went wrong")
 
 target_direction = "Right"
 
@@ -131,6 +135,7 @@ while True:
                 check = os.path.join(destination, check_list[0]) if check_list else None
                 if not os.path.exists(check):
                     shutil.move(file, destination)
+                    logging.info("Moved %s -> %s", file, destination)
                     sg.popup_ok("Successfully moved the file!")
                 else:
                     sg.popup_error("The file already exists in this folder!")
@@ -146,6 +151,7 @@ while True:
             check = os.path.join(destination, check_list[0]) if check_list else None
             if not os.path.exists(check):
                 shutil.copy(file, destination)
+                logging.info("Copied %s -> %s", file, destination)
                 sg.popup_ok("The file was successfully copied!")
             else:
                 sg.popup_error("The file already exist in this folder!")
