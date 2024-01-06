@@ -72,6 +72,35 @@ def swap_direction():   #Helping the swap-feature to be able to switch which way
         destination = values["-Left Folder-"]
     return file, destination
 
+def create_dir(base_path):
+    answer = sg.popup_yes_no("Do you want to create more than one folder?")
+    if answer == "Yes":
+        location = sg.popup_get_folder("Choose the location you want to create the folders:")
+        if location:
+            num_folders = sg.popup_get_text("How many folders do you want to create?")
+            try:
+                num_folders = int(num_folders)
+                for i in range(num_folders):
+                    folder_name = sg.popup_get_text(f"Enter the name for the folders {i+1}:", default_text = f"Folder_{i+1}")
+                    if folder_name:
+                        folder_path = os.path.join(location, folder_name)
+                        os.makedirs(folder_path)
+                        sg.popup_ok(f"Folder {folder_name} has been successfully created!") 
+            except ValueError:
+                sg.popup_error("Invalid input for the number of folders, try again!")                             
+           
+    elif answer == "No":
+        location = sg.popup_get_folder("Choose the location you want to create the folder:")
+        if location:
+            try:
+                folder_name = sg.popup_get_text("Enter the name for the folder:", default_text = "Folder")
+                if folder_name:
+                    folder_path = os.path.join(location, folder_name)
+                    os.makedirs(folder_path)
+                    sg.popup_ok(f"Folder {folder_name} has successfully been created!")
+            except ValueError:
+                sg.popup_error("Something went wrong")
+
 target_direction = "Right"
 
 while True:
@@ -126,6 +155,7 @@ while True:
         refresh_list(window, "-Right Folder-", "-Right List-")
 
     elif event == "-Create-":
-        sg.popup_ok("Create")
+        create_dir(values["-Left Folder-"] if target_direction == "Right" else values["-Right Folder-"])
         refresh_list(window, "-Left Folder-", "-Left List-")
         refresh_list(window, "-Right Folder-", "-Right List-")
+        
